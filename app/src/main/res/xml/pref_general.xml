@@ -1,0 +1,38 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_header" android:key="category">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="action_app"
+            android:title="@string/pref_title_app" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="action_shortcut"
+            android:title="@string/pref_title_shortcut" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="action_flashlight"
+            android:title="@string/pref_title_flashlight" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="action_brightness"
+            android:title="@string/pref_title_brightness" />
+
+        <SwitchPreference
+                android:defaultValue="false"
+                android:key="action_web"
+                android:title="@string/pref_title_web" />
+
+        <SwitchPreference
+                android:defaultValue="false"
+                android:key="action_recents"
+                android:title="@string/pref_title_recents" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

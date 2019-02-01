@@ -1,0 +1,30 @@
+<resources>
+
+    <string name="app_name">HomeBot</string>
+    <string name="warning">Enable HomeBot as your assistant for it to work</string>
+    <string name="error_no_assistant">This device doesn\'t support HomeBot</string>
+
+    <string name="pref_header">Choose what will happen when you press and hold the home button</string>
+    <string name="pref_title_app">Launch app</string>
+    <string name="pref_title_shortcut">Launch shortcut</string>
+    <string name="pref_title_web">Open web page</string>
+    <string name="pref_title_flashlight">Toggle flashlight</string>
+    <string name="pref_title_prev_app">Open previous app</string>
+    <string name="pref_title_recents">Open recent apps screen</string>
+    <string name="pref_title_lock">Lock phone</string>
+    <string name="pref_title_brightness">Toggle brightness</string>
+    <string name="pref_title_file">Open a file</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="enable">Enable</string>
+
+    <string name="choose_app">Choose an app</string>
+    <string name="choose_activity">Choose an activity</string>
+    <string name="choose_shortcut">Choose a shortcut</string>
+    <string name="other_activities">Other activities</string>
+    <string name="main_activity">Main app activity</string>
+
+    <string name="web_hint">www.duck.go</string>
+
+</resources>
