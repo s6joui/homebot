@@ -93,12 +93,16 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
             when(requestCode){
                 REQUEST_CODE_APP -> {
                     val appData = data?.extras?.getParcelable<ActivityInfo>(EXTRA_PICKED_CONTENT)
-                    val appName = appData?.loadLabel(activity?.packageManager!!).toString()
-                    switches[SWITCH_KEY_APP]?.summary = appName
-                    val editor = sharedPreferences.edit()
-                    editor.putString(KEY_APP_LAUNCH_VALUE, appData?.packageName)
-                    editor.putString(KEY_APP_ACTIVE_SUMMARY, appName)
-                    editor.apply()
+                    if(appData != null){
+                        val label = appData.loadLabel(activity?.packageManager!!).toString()
+                        switches[SWITCH_KEY_APP]?.summary = label
+                        val activityIntent = Intent()
+                        activityIntent.setClassName(appData.packageName, appData.name)
+                        val editor = sharedPreferences.edit()
+                        editor.putString(KEY_APP_LAUNCH_VALUE, activityIntent.toUri(Intent.URI_INTENT_SCHEME))
+                        editor.putString(KEY_APP_ACTIVE_SUMMARY, label)
+                        editor.apply()
+                    }
                 }
                 REQUEST_CODE_SHORTCUT -> {
                     val shortcutIntent = data?.extras?.getParcelable<Intent>(Intent.EXTRA_SHORTCUT_INTENT)

@@ -3,6 +3,7 @@
     <string name="app_name">HomeBot</string>
     <string name="warning">Enable HomeBot as your assistant for it to work</string>
     <string name="error_no_assistant">This device doesn\'t support HomeBot</string>
+    <string name="error_brightness">Cannot access system brightness settings</string>
 
     <string name="pref_header">Choose what will happen when you press and hold the home button</string>
     <string name="pref_title_app">Launch app</string>
