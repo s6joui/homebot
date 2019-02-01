@@ -1,23 +1,26 @@
 package com.abast.homebot
 
+import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.preference.*
 import com.abast.homebot.pickers.AppPickerActivity
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import com.abast.homebot.pickers.AppPickerActivity.Companion.EXTRA_PICKED_CONTENT
+import com.abast.homebot.pickers.AppPickerActivity.Companion.REQUEST_CODE_APP
+import com.abast.homebot.pickers.AppPickerActivity.Companion.REQUEST_CODE_SHORTCUT
 
 class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
 
     companion object {
         const val KEY_APP_FIRST_LAUNCH = "first_launch"
-        const val KEY_APP_LAUNCH_MODE = "launch_mode"
+        const val KEY_APP_LAUNCH_TYPE = "launch_type"
         const val KEY_APP_LAUNCH_VALUE = "launch_value"
-        const val KEY_APP_ACTIVITY_NAME = "launch_activity"
-        const val KEY_APP_SHORTCUT_INTENT = "s_intent"
         const val KEY_APP_ACTIVE_SUMMARY = "summary"
 
         const val SWITCH_KEY_APP = "action_app"
@@ -40,37 +43,77 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
 
         // Make intents for App and shortcut picker activities
         appPickerIntent = Intent(context,AppPickerActivity::class.java)
+        appPickerIntent.putExtra(AppPickerActivity.EXTRA_LABEL,getString(R.string.choose_app))
+        appPickerIntent.putExtra(AppPickerActivity.EXTRA_PICK_TYPE,AppPickerActivity.PICK_TYPE_APP)
+
         shortcutPickerIntent = Intent(context,AppPickerActivity::class.java)
+        shortcutPickerIntent.putExtra(AppPickerActivity.EXTRA_LABEL,getString(R.string.choose_shortcut))
+        shortcutPickerIntent.putExtra(AppPickerActivity.EXTRA_PICK_TYPE,AppPickerActivity.PICK_TYPE_SHORTCUT)
 
-        val appQueryIntent = Intent(Intent.ACTION_MAIN, null)
-        appQueryIntent.addCategory(Intent.CATEGORY_LAUNCHER)
-        appPickerIntent.putExtra(AppPickerActivity.EXTRA_QUERY_INTENT,appQueryIntent)
-
-        val shortcutQueryIntent = Intent(Intent.ACTION_CREATE_SHORTCUT, null)
-        shortcutPickerIntent.putExtra(AppPickerActivity.EXTRA_QUERY_INTENT,shortcutQueryIntent)
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_general)
         val prefCategory = preferenceScreen.getPreference(0) as PreferenceGroup
-
-        // Store all switches in hashmap
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        // Store all switches in HashMap
         for (i in 0 until prefCategory.preferenceCount) {
             val pref = prefCategory.getPreference(i);
             switches[pref.key] = pref as SwitchPreference
         }
+        // Read saved data
+        val currentSwitch = sharedPreferences.getString(KEY_APP_LAUNCH_TYPE, "")
+        val summary = sharedPreferences.getString(KEY_APP_ACTIVE_SUMMARY,"")
+        switches[currentSwitch!!]?.summary = summary
     }
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        val editor = sharedPreferences.edit()
         val switch = preference as SwitchPreference
         uncheckAllSwitchesBut(switch.key)
-        when(switch.key){
-            SWITCH_KEY_APP -> startActivityForResult(appPickerIntent,AppPickerActivity.REQUEST_CODE_APP)
-            SWITCH_KEY_SHORTCUT -> startActivityForResult(shortcutPickerIntent,AppPickerActivity.REQUEST_CODE_SHORTCUT)
-            SWITCH_KEY_WEB -> showWebDialog()
-            SWITCH_KEY_BRIGHTNESS -> askForBrightnessPermission()
+        if(switch.isChecked){
+            editor.putString(KEY_APP_LAUNCH_TYPE,switch.key)
+            editor.putString(KEY_APP_ACTIVE_SUMMARY, null)
+            editor.apply()
+            when(switch.key){
+                SWITCH_KEY_APP -> startActivityForResult(appPickerIntent,AppPickerActivity.REQUEST_CODE_APP)
+                SWITCH_KEY_SHORTCUT -> startActivityForResult(shortcutPickerIntent,AppPickerActivity.REQUEST_CODE_SHORTCUT)
+                SWITCH_KEY_WEB -> showWebDialog()
+                SWITCH_KEY_BRIGHTNESS -> askForBrightnessPermission()
+            }
         }
         return super.onPreferenceTreeClick(preference)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == RESULT_OK){
+            val sharedPreferences : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+            when(requestCode){
+                REQUEST_CODE_APP -> {
+                    val appData = data?.extras?.getParcelable<ActivityInfo>(EXTRA_PICKED_CONTENT)
+                    val appName = appData?.loadLabel(activity?.packageManager!!).toString()
+                    switches[SWITCH_KEY_APP]?.summary = appName
+                    val editor = sharedPreferences.edit()
+                    editor.putString(KEY_APP_LAUNCH_VALUE, appData?.packageName)
+                    editor.putString(KEY_APP_ACTIVE_SUMMARY, appName)
+                    editor.apply()
+                }
+                REQUEST_CODE_SHORTCUT -> {
+                    val shortcutIntent = data?.extras?.getParcelable<Intent>(Intent.EXTRA_SHORTCUT_INTENT)
+                    val shortcutName = data?.extras?.getString(Intent.EXTRA_SHORTCUT_NAME)
+                    switches[SWITCH_KEY_SHORTCUT]?.summary = shortcutName
+                    val editor = sharedPreferences.edit()
+                    editor.putString(KEY_APP_LAUNCH_VALUE, shortcutIntent?.toUri(Intent.URI_INTENT_SCHEME))
+                    editor.putString(KEY_APP_ACTIVE_SUMMARY, shortcutName)
+                    editor.apply()
+                }
+            }
+        }else{
+            // Sets all switches to off
+            switches.map{ it.value.isChecked = false }
+        }
     }
 
     // ============== Utils ============== //

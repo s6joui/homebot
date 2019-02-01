@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.abast.homebot.R
 import kotlinx.android.synthetic.main.list_item.view.*
 
-class ItemInfoAdapter(val context : Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ItemInfoAdapter(val context : Context, val onItemClick: ((ItemInfo) -> Unit)) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var items : List<ItemInfo> = emptyList()
 
@@ -25,9 +25,15 @@ class ItemInfoAdapter(val context : Context) : RecyclerView.Adapter<RecyclerView
         vh.label.text = item.loadLabel(context.packageManager)
     }
 
-    class ListItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ListItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val label = view.label
         val image = view.image
+
+        init{
+            view.setOnClickListener{
+                onItemClick.invoke(items[adapterPosition])
+            }
+        }
     }
 
 }

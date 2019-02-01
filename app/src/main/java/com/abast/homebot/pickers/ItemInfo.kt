@@ -7,8 +7,8 @@ import android.graphics.drawable.Drawable
 
 class ItemInfo {
 
-    private lateinit var resolveInfo: ResolveInfo
-    private lateinit var activityInfo: ActivityInfo
+    lateinit var resolveInfo: ResolveInfo
+    lateinit var activityInfo: ActivityInfo
     private var type = 0
 
     constructor(info : ResolveInfo){
@@ -21,19 +21,19 @@ class ItemInfo {
         activityInfo = info
     }
 
-    public fun loadLabel(pm : PackageManager) : CharSequence{
-        if(type == 0){
-            return resolveInfo.loadLabel(pm)
+    fun loadLabel(pm : PackageManager) : CharSequence{
+        return if(type == 0){
+            resolveInfo.loadLabel(pm)
         }else{
-            return activityInfo.loadLabel(pm)
+            activityInfo.loadLabel(pm)
         }
     }
 
-    public fun loadIcon(pm : PackageManager) : Drawable{
-        if(type == 0){
-            return resolveInfo.loadIcon(pm)
+    fun loadIcon(pm : PackageManager) : Drawable{
+        return if(type == 0){
+            resolveInfo?.loadIcon(pm)
         }else{
-            return activityInfo.loadIcon(pm)
+            activityInfo?.loadIcon(pm)
         }
     }
 

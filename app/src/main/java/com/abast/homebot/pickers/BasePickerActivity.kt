@@ -14,11 +14,16 @@ abstract class BasePickerActivity : AppCompatActivity() {
     lateinit var adapter : ItemInfoAdapter
     var headerItem : ItemInfo? = null
 
+    abstract fun onItemClick(item: ItemInfo)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recyclerview)
 
-        adapter = ItemInfoAdapter(this)
+        adapter = ItemInfoAdapter(this) {
+            onItemClick(it)
+        }
+
         recycler_view.layoutManager = LinearLayoutManager(this,RecyclerView.VERTICAL,false)
         recycler_view.adapter = adapter
     }
