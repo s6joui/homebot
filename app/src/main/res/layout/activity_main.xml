@@ -26,8 +26,9 @@
             android:layout_width="92dp"
             android:layout_height="0dp"
             android:background="@color/colorAccent"
-            android:textColor="#ffffff"
+            android:textColor="@color/white"
             android:text="@string/enable"
+            style="?android:attr/borderlessButtonStyle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/warningText"/>

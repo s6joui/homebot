@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name">HomeBot</string>
-    <string name="warning">Enable HomeBot as your assistant for it to work</string>
+    <string name="warning">You must enable HomeBot as your assist app for it to work</string>
     <string name="error_no_assistant">This device doesn\'t support HomeBot</string>
     <string name="error_brightness">Cannot access system brightness settings</string>
 

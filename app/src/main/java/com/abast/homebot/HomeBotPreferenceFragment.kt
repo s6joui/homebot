@@ -1,6 +1,7 @@
 package com.abast.homebot
 
 import android.app.Activity.RESULT_OK
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -11,6 +12,7 @@ import com.abast.homebot.pickers.AppPickerActivity
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.view.View
 import com.abast.homebot.pickers.AppPickerActivity.Companion.EXTRA_PICKED_CONTENT
 import com.abast.homebot.pickers.AppPickerActivity.Companion.REQUEST_CODE_APP
 import com.abast.homebot.pickers.AppPickerActivity.Companion.REQUEST_CODE_SHORTCUT
@@ -82,6 +84,8 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
                 SWITCH_KEY_WEB -> showWebDialog()
                 SWITCH_KEY_BRIGHTNESS -> askForBrightnessPermission()
             }
+        }else{
+            switches[switch.key]?.summary = null
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -117,6 +121,16 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
         }else{
             // Sets all switches to off
             switches.map{ it.value.isChecked = false }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Check if we have brightness permission
+        val brightnessSwitch = switches[SWITCH_KEY_BRIGHTNESS]
+        if (!Settings.System.canWrite(activity) && brightnessSwitch?.isChecked == true) {
+            brightnessSwitch.isChecked = false
         }
     }
 

@@ -1,10 +1,13 @@
 package com.abast.homebot
 
+import android.content.ComponentName
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import android.content.Intent
 import android.provider.Settings
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -26,4 +29,33 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager.beginTransaction().replace(R.id.preferences_frame, HomeBotPreferenceFragment()).commit()
     }
+
+    override fun onResume() {
+        super.onResume()
+        if(isAssistApp(this)){
+            warningText.visibility = View.GONE
+            warningButton.visibility = View.GONE
+        }else{
+            warningText.visibility = View.VISIBLE
+            warningButton.visibility = View.VISIBLE
+        }
+    }
+
+    /**
+     * Checks if app is set as the Assist app.
+     */
+    private fun isAssistApp(context: Context) : Boolean {
+        val assistant = Settings.Secure.getString(context.contentResolver, "assistant")
+        var isAssistApp = false
+        if (assistant != null) {
+            val cn = ComponentName.unflattenFromString(assistant)
+            if (cn != null) {
+                if (cn.packageName == context.packageName) {
+                    isAssistApp = true
+                }
+            }
+        }
+        return isAssistApp
+    }
+
 }
