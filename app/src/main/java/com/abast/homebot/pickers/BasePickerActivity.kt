@@ -55,7 +55,9 @@ abstract class BasePickerActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
 
         if(items.isEmpty()){
-            //Show empty message
+            emptyText.visibility = View.VISIBLE
+        }else{
+            emptyText.visibility = View.GONE
         }
     }
 

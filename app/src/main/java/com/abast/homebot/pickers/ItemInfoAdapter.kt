@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.abast.homebot.R
 import kotlinx.android.synthetic.main.list_item.view.*
 
-class ItemInfoAdapter(val context : Context, val onItemClick: ((ItemInfo) -> Unit)) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ItemInfoAdapter(val context : Context, val onItemClick: (ItemInfo) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var items : List<ItemInfo> = emptyList()
 

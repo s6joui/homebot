@@ -25,7 +25,9 @@
     <string name="choose_shortcut">Choose a shortcut</string>
     <string name="other_activities">Other activities</string>
     <string name="default_activity">Default app activity</string>
+    <string name="enter_url">Enter a web URL</string>
 
     <string name="web_hint">www.duck.com</string>
+    <string name="no_items">No available items</string>
 
 </resources>

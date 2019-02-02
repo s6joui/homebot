@@ -11,9 +11,12 @@ import com.abast.homebot.pickers.AppPickerActivity
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import com.abast.homebot.pickers.AppPickerActivity.Companion.EXTRA_PICKED_CONTENT
 import com.abast.homebot.pickers.AppPickerActivity.Companion.REQUEST_CODE_APP
 import com.abast.homebot.pickers.AppPickerActivity.Companion.REQUEST_CODE_SHORTCUT
+import com.abast.homebot.pickers.ItemInfo
 
 class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
 
@@ -74,15 +77,18 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
         uncheckAllSwitchesBut(switch.key)
         if(switch.isChecked){
             editor.putString(KEY_APP_LAUNCH_TYPE,switch.key)
-            editor.putString(KEY_APP_ACTIVE_SUMMARY, null)
+            editor.remove(KEY_APP_ACTIVE_SUMMARY)
             editor.apply()
             when(switch.key){
                 SWITCH_KEY_APP -> startActivityForResult(appPickerIntent,AppPickerActivity.REQUEST_CODE_APP)
                 SWITCH_KEY_SHORTCUT -> startActivityForResult(shortcutPickerIntent,AppPickerActivity.REQUEST_CODE_SHORTCUT)
-                SWITCH_KEY_WEB -> showWebDialog()
                 SWITCH_KEY_BRIGHTNESS -> askForBrightnessPermission()
+                SWITCH_KEY_WEB -> showWebDialog(){ setLaunchUrl(it) }
             }
         }else{
+            editor.remove(KEY_APP_LAUNCH_TYPE)
+            editor.remove(KEY_APP_ACTIVE_SUMMARY)
+            editor.apply()
             switches[switch.key]?.summary = null
         }
         return super.onPreferenceTreeClick(preference)
@@ -151,8 +157,23 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
     /**
      * Shows dialog with EditText to enter a url
      */
-    private fun showWebDialog() {
-
+    private fun showWebDialog(onInput : (String) -> Unit) {
+        context?.let{
+            val et = EditText(it)
+            et.hint = getString(R.string.web_hint)
+            val builder = AlertDialog.Builder(it)
+            builder.setTitle(R.string.enter_url)
+            builder.setView(et)
+            builder.setPositiveButton(R.string.ok){dialog, _ ->
+                onInput.invoke(et.text.toString())
+                dialog.dismiss()
+            }
+            builder.setNegativeButton(R.string.cancel){dialog,_ ->
+                dialog.cancel()
+            }
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
     }
 
     /**
@@ -167,5 +188,17 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
             }
         }
     }
+
+    /**
+     * Sets the web url to launch
+     */
+    private fun setLaunchUrl(it: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString(KEY_APP_LAUNCH_VALUE, it)
+        editor.putString(KEY_APP_ACTIVE_SUMMARY, it)
+        editor.apply()
+        switches[SWITCH_KEY_WEB]?.summary = it
+    }
+
 
 }

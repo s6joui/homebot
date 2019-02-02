@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
@@ -19,6 +20,7 @@ import com.abast.homebot.HomeBotPreferenceFragment.Companion.SWITCH_KEY_BRIGHTNE
 import com.abast.homebot.HomeBotPreferenceFragment.Companion.SWITCH_KEY_FLASHLIGHT
 import com.abast.homebot.HomeBotPreferenceFragment.Companion.SWITCH_KEY_RECENTS
 import com.abast.homebot.HomeBotPreferenceFragment.Companion.SWITCH_KEY_SHORTCUT
+import com.abast.homebot.HomeBotPreferenceFragment.Companion.SWITCH_KEY_WEB
 import java.net.URISyntaxException
 
 class ActionLauncherActivity : AppCompatActivity() {
@@ -38,6 +40,7 @@ class ActionLauncherActivity : AppCompatActivity() {
             SWITCH_KEY_FLASHLIGHT -> toggleFlashlight(sharedPrefs)
             SWITCH_KEY_BRIGHTNESS -> toggleBrightness()
             SWITCH_KEY_RECENTS -> openRecents()
+            SWITCH_KEY_WEB -> openWebAddress(launchValue)
             SWITCH_KEY_SHORTCUT, SWITCH_KEY_APP -> launchUri(launchValue)
             else -> launchMainActivity()
         }
@@ -144,6 +147,18 @@ class ActionLauncherActivity : AppCompatActivity() {
         } else {
             launchMainActivity()
         }
+    }
+
+    /**
+     * Opens web browser pointing to given url
+     */
+    private fun openWebAddress(url: String) {
+        var finalUrl = url
+        if (!finalUrl.startsWith("http://") && !finalUrl.startsWith("https://"))
+            finalUrl = "http://$url"
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl))
+        startActivity(browserIntent)
+        finish()
     }
 
 }
