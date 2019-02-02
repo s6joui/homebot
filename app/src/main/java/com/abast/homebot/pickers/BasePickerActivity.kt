@@ -37,6 +37,7 @@ abstract class BasePickerActivity : AppCompatActivity() {
         header.label.text = item.loadLabel(packageManager)
         header.subtitle.text = getString(R.string.default_activity)
         header.image.setImageDrawable(item.loadIcon(packageManager))
+        header.setOnClickListener{ onItemClick(item) }
     }
 
     fun setListItems(items : Array<ResolveInfo>){

@@ -8,12 +8,13 @@ import android.graphics.drawable.Drawable
 class ItemInfo {
 
     lateinit var resolveInfo: ResolveInfo
-    lateinit var activityInfo: ActivityInfo
+    var activityInfo: ActivityInfo
     private var type = 0
 
     constructor(info : ResolveInfo){
         type = 0
         resolveInfo = info
+        activityInfo = info.activityInfo
     }
 
     constructor(info : ActivityInfo){
