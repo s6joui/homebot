@@ -11,8 +11,6 @@ import android.app.NotificationManager
 import android.app.NotificationChannel
 import android.os.Build
 
-
-
 class FlashlightService : Service() {
 
     companion object {
