@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
        xmlns:app="http://schemas.android.com/apk/res-auto"
        android:layout_width="match_parent"
-       android:layout_height="64dp"
+       android:layout_height="wrap_content"
        android:clickable="true"
        android:focusable="true"
        android:background="?attr/selectableItemBackground">
@@ -15,17 +15,20 @@
             android:layout_marginStart="16dp"
             app:srcCompat="@mipmap/ic_launcher"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"/>
 
     <TextView
             android:id="@+id/label"
             android:text="@string/app_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/image"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.32999998"
-    />
+            app:layout_constraintBottom_toTopOf="@+id/subtitle"
+            app:layout_constraintLeft_toRightOf="@+id/image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
+            app:layout_constraintStart_toEndOf="@+id/image" android:layout_marginStart="16dp"/>
 
     <TextView
             android:id="@+id/subtitle"
@@ -35,8 +38,10 @@
             android:textSize="11sp"
             android:maxLines="2"
             android:ellipsize="end"
-            app:layout_constraintStart_toEndOf="@+id/image"
-            android:layout_marginStart="16dp" app:layout_constraintTop_toBottomOf="@+id/label"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/image"
+            app:layout_constraintTop_toBottomOf="@+id/label"
+            android:layout_marginEnd="16dp" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image" android:layout_marginStart="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
