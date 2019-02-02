@@ -24,8 +24,8 @@
     <string name="choose_activity">Choose an activity</string>
     <string name="choose_shortcut">Choose a shortcut</string>
     <string name="other_activities">Other activities</string>
-    <string name="main_activity">Main app activity</string>
+    <string name="default_activity">Default app activity</string>
 
-    <string name="web_hint">www.duck.go</string>
+    <string name="web_hint">www.duck.com</string>
 
 </resources>

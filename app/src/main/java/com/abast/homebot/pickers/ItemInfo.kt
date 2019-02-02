@@ -21,6 +21,14 @@ class ItemInfo {
         activityInfo = info
     }
 
+    fun packageName() : String{
+        return if(type == 0){
+            resolveInfo.activityInfo.packageName
+        }else{
+            activityInfo.packageName + "." + activityInfo.name
+        }
+    }
+
     fun loadLabel(pm : PackageManager) : CharSequence{
         return if(type == 0){
             resolveInfo.loadLabel(pm)

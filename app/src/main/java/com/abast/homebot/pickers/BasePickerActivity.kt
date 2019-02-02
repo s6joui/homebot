@@ -4,10 +4,12 @@ import android.content.pm.ActivityInfo
 import android.content.pm.ResolveInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.abast.homebot.R
 import kotlinx.android.synthetic.main.activity_recyclerview.*
+import kotlinx.android.synthetic.main.list_item.view.*
 
 abstract class BasePickerActivity : AppCompatActivity() {
 
@@ -30,6 +32,11 @@ abstract class BasePickerActivity : AppCompatActivity() {
 
     fun setHeader(item : ItemInfo){
         headerItem = item
+        headerTitle.visibility = View.VISIBLE
+        header.visibility = View.VISIBLE
+        header.label.text = item.loadLabel(packageManager)
+        header.subtitle.text = getString(R.string.default_activity)
+        header.image.setImageDrawable(item.loadIcon(packageManager))
     }
 
     fun setListItems(items : Array<ResolveInfo>){

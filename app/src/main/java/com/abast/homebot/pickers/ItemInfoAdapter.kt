@@ -22,11 +22,13 @@ class ItemInfoAdapter(val context : Context, val onItemClick: ((ItemInfo) -> Uni
         val item = items.get(position)
         val vh : ListItemViewHolder = holder as ListItemViewHolder
         vh.image.setImageDrawable(item.loadIcon(context.packageManager))
+        vh.subtitle.text = item.packageName()
         vh.label.text = item.loadLabel(context.packageManager)
     }
 
     inner class ListItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val label = view.label
+        val subtitle = view.subtitle
         val image = view.image
 
         init{
