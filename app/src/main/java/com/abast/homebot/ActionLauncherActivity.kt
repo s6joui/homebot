@@ -1,10 +1,7 @@
 package com.abast.homebot
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.hardware.camera2.CameraAccessException
-import android.hardware.camera2.CameraManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +10,7 @@ import android.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.abast.homebot.HomeBotPreferenceFragment.Companion.KEY_APP_LAUNCH_TYPE
 import com.abast.homebot.HomeBotPreferenceFragment.Companion.KEY_APP_LAUNCH_VALUE
 import com.abast.homebot.HomeBotPreferenceFragment.Companion.SWITCH_KEY_APP
@@ -72,25 +70,15 @@ class ActionLauncherActivity : AppCompatActivity() {
     }
 
     /**
-     * Toggles flashlight
+     * Toggles flashlight via a Service
      */
     private fun toggleFlashlight(sharedPrefs : SharedPreferences){
-        try {
-            val manager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
-            val list = manager.cameraIdList
-            var torchOn = sharedPrefs.getBoolean(TORCH_ENABLED, false)
-            torchOn = !torchOn
-            manager.setTorchMode(list[0], torchOn)
-            val editor = sharedPrefs.edit()
-            editor.putBoolean(TORCH_ENABLED, torchOn)
-            editor.apply()
-            finish()
-        } catch (ex: CameraAccessException) {
-            val editor = sharedPrefs.edit()
-            editor.putBoolean(TORCH_ENABLED, false)
-            editor.apply()
-            ex.printStackTrace()
-        }
+        val torchEnabled = sharedPrefs.getBoolean(TORCH_ENABLED,true)
+        sharedPrefs.edit().putBoolean(TORCH_ENABLED,!torchEnabled).apply()
+        val flashlightIntent = Intent(this,FlashlightService::class.java)
+        flashlightIntent.action = if(torchEnabled) FlashlightService.DISABLE_TORCH else FlashlightService.ENABLE_TORCH
+        ContextCompat.startForegroundService(this,flashlightIntent)
+        finish()
     }
 
     /**
@@ -143,7 +131,6 @@ class ActionLauncherActivity : AppCompatActivity() {
                 e.printStackTrace()
                 launchMainActivity()
             }
-
         } else {
             launchMainActivity()
         }
@@ -152,13 +139,17 @@ class ActionLauncherActivity : AppCompatActivity() {
     /**
      * Opens web browser pointing to given url
      */
-    private fun openWebAddress(url: String) {
-        var finalUrl = url
-        if (!finalUrl.startsWith("http://") && !finalUrl.startsWith("https://"))
-            finalUrl = "http://$url"
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl))
-        startActivity(browserIntent)
-        finish()
+    private fun openWebAddress(url: String?) {
+        if(url != null){
+            var finalUrl = url
+            if (!finalUrl.startsWith("http://") && !finalUrl.startsWith("https://"))
+                finalUrl = "http://$url"
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl))
+            startActivity(browserIntent)
+            finish()
+        }else{
+            launchMainActivity()
+        }
     }
 
 }

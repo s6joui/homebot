@@ -33,16 +33,19 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity
                 android:name=".pickers.ActivityPickerActivity"
                 android:label="@string/choose_activity"
                 android:parentActivityName=".MainActivity">
         </activity>
+
         <activity
                 android:name=".pickers.AppPickerActivity"
                 android:label="@string/choose_app"
                 android:parentActivityName=".MainActivity">
         </activity>
+
         <activity
                 android:name=".ActionLauncherActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
@@ -51,14 +54,17 @@
                 android:theme="@style/TranslucentTheme">
             <intent-filter>
                 <action android:name="android.intent.action.ASSIST"/>
-
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
         <activity
                 android:name=".LicensesActivity"
                 android:label="@string/open_source_licenses">
         </activity>
+
+        <service android:name=".FlashlightService"/>
+
     </application>
 
 </manifest>
