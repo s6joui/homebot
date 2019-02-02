@@ -73,7 +73,7 @@ class ActionLauncherActivity : AppCompatActivity() {
      * Toggles flashlight via a Service
      */
     private fun toggleFlashlight(sharedPrefs : SharedPreferences){
-        val torchEnabled = sharedPrefs.getBoolean(TORCH_ENABLED,true)
+        val torchEnabled = sharedPrefs.getBoolean(TORCH_ENABLED,false)
         sharedPrefs.edit().putBoolean(TORCH_ENABLED,!torchEnabled).apply()
         val flashlightIntent = Intent(this,FlashlightService::class.java)
         flashlightIntent.action = if(torchEnabled) FlashlightService.DISABLE_TORCH else FlashlightService.ENABLE_TORCH

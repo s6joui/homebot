@@ -6,6 +6,12 @@ import android.content.Intent
 import android.hardware.camera2.CameraManager
 import android.os.IBinder
 import java.lang.Exception
+import androidx.core.app.NotificationCompat
+import android.app.NotificationManager
+import android.app.NotificationChannel
+import android.os.Build
+
+
 
 class FlashlightService : Service() {
 
@@ -23,9 +29,21 @@ class FlashlightService : Service() {
         action?.let{
             when(it){
                 ENABLE_TORCH -> setFlashlight(true)
-                DISABLE_TORCH -> setFlashlight(false)
+                DISABLE_TORCH -> {
+                    setFlashlight(false)
+                    stopSelf()
+                }
             }
         }
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            val channelId = "homebot_flashlight"
+            val channel = NotificationChannel(channelId,getString(R.string.flashlight_on),NotificationManager.IMPORTANCE_DEFAULT)
+            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
+            val notification = NotificationCompat.Builder(this, channelId).setContentTitle(getString(R.string.flashlight_on)).setContentText(getString(R.string.flashlight_on)).build()
+            startForeground(321123, notification)
+        }
+
         return super.onStartCommand(intent, flags, startId)
     }
 
