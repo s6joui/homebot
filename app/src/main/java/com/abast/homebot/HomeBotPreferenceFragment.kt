@@ -16,12 +16,10 @@ import androidx.appcompat.app.AlertDialog
 import com.abast.homebot.pickers.AppPickerActivity.Companion.EXTRA_PICKED_CONTENT
 import com.abast.homebot.pickers.AppPickerActivity.Companion.REQUEST_CODE_APP
 import com.abast.homebot.pickers.AppPickerActivity.Companion.REQUEST_CODE_SHORTCUT
-import com.abast.homebot.pickers.ItemInfo
 
 class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
 
     companion object {
-        const val KEY_APP_FIRST_LAUNCH = "first_launch"
         const val KEY_APP_LAUNCH_TYPE = "launch_type"
         const val KEY_APP_LAUNCH_VALUE = "launch_value"
         const val KEY_APP_ACTIVE_SUMMARY = "summary"
@@ -40,7 +38,7 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
     private lateinit var appPickerIntent : Intent
     private lateinit var shortcutPickerIntent : Intent
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -52,7 +50,6 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
         shortcutPickerIntent = Intent(context,AppPickerActivity::class.java)
         shortcutPickerIntent.putExtra(AppPickerActivity.EXTRA_LABEL,getString(R.string.choose_shortcut))
         shortcutPickerIntent.putExtra(AppPickerActivity.EXTRA_PICK_TYPE,AppPickerActivity.PICK_TYPE_SHORTCUT)
-
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -87,6 +84,7 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
             }
         }else{
             editor.remove(KEY_APP_LAUNCH_TYPE)
+            editor.remove(KEY_APP_LAUNCH_VALUE)
             editor.remove(KEY_APP_ACTIVE_SUMMARY)
             editor.apply()
             switches[switch.key]?.summary = null
@@ -106,20 +104,14 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
                         switches[SWITCH_KEY_APP]?.summary = label
                         val activityIntent = Intent()
                         activityIntent.setClassName(appData.packageName, appData.name)
-                        val editor = sharedPreferences.edit()
-                        editor.putString(KEY_APP_LAUNCH_VALUE, activityIntent.toUri(Intent.URI_INTENT_SCHEME))
-                        editor.putString(KEY_APP_ACTIVE_SUMMARY, label)
-                        editor.apply()
+                        saveSettings(launchValue = activityIntent.toUri(Intent.URI_INTENT_SCHEME),summary = label)
                     }
                 }
                 REQUEST_CODE_SHORTCUT -> {
                     val shortcutIntent = data?.extras?.getParcelable<Intent>(Intent.EXTRA_SHORTCUT_INTENT)
                     val shortcutName = data?.extras?.getString(Intent.EXTRA_SHORTCUT_NAME)
                     switches[SWITCH_KEY_SHORTCUT]?.summary = shortcutName
-                    val editor = sharedPreferences.edit()
-                    editor.putString(KEY_APP_LAUNCH_VALUE, shortcutIntent?.toUri(Intent.URI_INTENT_SCHEME))
-                    editor.putString(KEY_APP_ACTIVE_SUMMARY, shortcutName)
-                    editor.apply()
+                    saveSettings(launchValue = shortcutIntent?.toUri(Intent.URI_INTENT_SCHEME),summary = shortcutName)
                 }
             }
         }else{
@@ -169,6 +161,7 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
                 dialog.dismiss()
             }
             builder.setNegativeButton(R.string.cancel){dialog,_ ->
+                switches[SWITCH_KEY_WEB]?.isChecked = false
                 dialog.cancel()
             }
             val dialog: AlertDialog = builder.create()
@@ -193,12 +186,18 @@ class HomeBotPreferenceFragment : PreferenceFragmentCompat() {
      * Sets the web url to launch
      */
     private fun setLaunchUrl(it: String) {
-        val editor = sharedPreferences.edit()
-        editor.putString(KEY_APP_LAUNCH_VALUE, it)
-        editor.putString(KEY_APP_ACTIVE_SUMMARY, it)
-        editor.apply()
         switches[SWITCH_KEY_WEB]?.summary = it
+        saveSettings(it,it)
     }
 
+    /**
+     * Utility function to save launch settings to SharedPreferences
+     */
+    private fun saveSettings(launchValue : String?, summary : String?){
+        val editor = sharedPreferences.edit()
+        editor.putString(KEY_APP_LAUNCH_VALUE, launchValue)
+        editor.putString(KEY_APP_ACTIVE_SUMMARY, summary)
+        editor.apply()
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.abast.homebot.pickers
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,9 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.abast.homebot.R
 import kotlinx.android.synthetic.main.list_item.view.*
 
-class ItemInfoAdapter(val context : Context, val onItemClick: (ItemInfo) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ActivityInfoAdapter(private val context : Context, val onItemClick: (ActivityInfo) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var items : List<ItemInfo> = emptyList()
+    var items : Array<ActivityInfo> = emptyArray()
 
     override fun getItemCount(): Int = items.size
 
@@ -22,7 +23,7 @@ class ItemInfoAdapter(val context : Context, val onItemClick: (ItemInfo) -> Unit
         val item = items.get(position)
         val vh : ListItemViewHolder = holder as ListItemViewHolder
         vh.image.setImageDrawable(item.loadIcon(context.packageManager))
-        vh.subtitle.text = item.packageName()
+        vh.subtitle.text = item.name
         vh.label.text = item.loadLabel(context.packageManager)
     }
 

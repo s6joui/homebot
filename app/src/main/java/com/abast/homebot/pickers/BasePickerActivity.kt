@@ -13,16 +13,16 @@ import kotlinx.android.synthetic.main.list_item.view.*
 
 abstract class BasePickerActivity : AppCompatActivity() {
 
-    lateinit var adapter : ItemInfoAdapter
-    var headerItem : ItemInfo? = null
+    lateinit var adapter : ActivityInfoAdapter
+    var headerItem : ActivityInfo? = null
 
-    abstract fun onItemClick(item: ItemInfo)
+    abstract fun onItemClick(item: ActivityInfo)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recyclerview)
 
-        adapter = ItemInfoAdapter(this) {
+        adapter = ActivityInfoAdapter(this) {
             onItemClick(it)
         }
 
@@ -30,7 +30,7 @@ abstract class BasePickerActivity : AppCompatActivity() {
         recycler_view.adapter = adapter
     }
 
-    fun setHeader(item : ItemInfo){
+    fun setHeader(item : ActivityInfo){
         headerItem = item
         headerTitle.visibility = View.VISIBLE
         header.visibility = View.VISIBLE
@@ -40,17 +40,7 @@ abstract class BasePickerActivity : AppCompatActivity() {
         header.setOnClickListener{ onItemClick(item) }
     }
 
-    fun setListItems(items : Array<ResolveInfo>){
-        val list : List<ItemInfo> = items.map{ItemInfo(it)}
-        setListItems(list)
-    }
-
     fun setListItems(items : Array<ActivityInfo>){
-        val list : List<ItemInfo> = items.map{ItemInfo(it)}
-        setListItems(list)
-    }
-
-    fun setListItems(items : List<ItemInfo>){
         adapter.items = items
         adapter.notifyDataSetChanged()
 

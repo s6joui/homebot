@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.widget.Toast
 import android.content.Intent
 import android.provider.Settings
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -39,6 +41,19 @@ class MainActivity : AppCompatActivity() {
             warningText.visibility = View.VISIBLE
             warningButton.visibility = View.VISIBLE
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu,menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if(item?.itemId == R.id.licenses){
+            startActivity(Intent(this,LicensesActivity::class.java))
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     /**

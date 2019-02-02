@@ -29,5 +29,6 @@
 
     <string name="web_hint">www.duck.com</string>
     <string name="no_items">No available items</string>
+    <string name="open_source_licenses">Open-source licenses</string>
 
 </resources>

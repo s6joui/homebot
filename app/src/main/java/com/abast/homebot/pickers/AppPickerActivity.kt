@@ -39,19 +39,17 @@ class AppPickerActivity : BasePickerActivity() {
         }
 
         title = label ?: getString(R.string.choose_app)
-
         val itemList = packageManager.queryIntentActivities(queryIntent, 0)
-
-        setListItems(itemList.toTypedArray())
+        setListItems(itemList.map { it.activityInfo }.toTypedArray())
     }
 
-    override fun onItemClick(item: ItemInfo) {
+    override fun onItemClick(item: ActivityInfo) {
         if(pickType == PICK_TYPE_APP){
             val i = Intent(this, ActivityPickerActivity::class.java)
-            i.putExtra(ActivityPickerActivity.EXTRA_APP_INFO, item.resolveInfo)
+            i.putExtra(ActivityPickerActivity.EXTRA_APP_INFO, item)
             startActivityForResult(i, ActivityPickerActivity.REQUEST_CODE)
         }else if(pickType == PICK_TYPE_SHORTCUT){
-            launchShortcutConfig(item.resolveInfo.activityInfo)
+            launchShortcutConfig(item)
         }
     }
 
