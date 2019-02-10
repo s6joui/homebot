@@ -1,7 +1,6 @@
 package com.abast.homebot
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -23,19 +22,15 @@ import java.net.URISyntaxException
 
 class ActionLauncherActivity : AppCompatActivity() {
 
-    companion object {
-        const val TORCH_ENABLED = "torch_enabled"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
         val launchType = sharedPrefs.getString(KEY_APP_LAUNCH_TYPE, null)
-
         val launchValue = sharedPrefs.getString(KEY_APP_LAUNCH_VALUE, null)
 
         when(launchType){
-            SWITCH_KEY_FLASHLIGHT -> toggleFlashlight(sharedPrefs)
+            SWITCH_KEY_FLASHLIGHT -> toggleFlashlight()
             SWITCH_KEY_BRIGHTNESS -> toggleBrightness()
             SWITCH_KEY_RECENTS -> openRecents()
             SWITCH_KEY_WEB -> openWebAddress(launchValue)
@@ -72,11 +67,8 @@ class ActionLauncherActivity : AppCompatActivity() {
     /**
      * Toggles flashlight via a Service
      */
-    private fun toggleFlashlight(sharedPrefs : SharedPreferences){
-        val torchEnabled = sharedPrefs.getBoolean(TORCH_ENABLED,false)
-        sharedPrefs.edit().putBoolean(TORCH_ENABLED,!torchEnabled).apply()
+    private fun toggleFlashlight(){
         val flashlightIntent = Intent(this,FlashlightService::class.java)
-        flashlightIntent.action = if(torchEnabled) FlashlightService.DISABLE_TORCH else FlashlightService.ENABLE_TORCH
         ContextCompat.startForegroundService(this,flashlightIntent)
         finish()
     }
@@ -101,7 +93,6 @@ class ActionLauncherActivity : AppCompatActivity() {
             ex.printStackTrace()
             launchMainActivity()
         }
-
     }
 
     /**

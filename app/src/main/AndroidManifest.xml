@@ -64,7 +64,6 @@
         </activity>
 
         <service android:name=".FlashlightService"/>
-
     </application>
 
 </manifest>
