@@ -30,6 +30,10 @@ abstract class BasePickerActivity : AppCompatActivity() {
         recycler_view.adapter = adapter
     }
 
+    fun setLoading(enabled: Boolean){
+        progressBar.visibility = if(enabled) View.VISIBLE else View.INVISIBLE
+    }
+
     fun setHeader(item : ActivityInfo){
         headerItem = item
         headerTitle.visibility = View.VISIBLE

@@ -6,6 +6,11 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import com.abast.homebot.R
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class AppPickerActivity : BasePickerActivity() {
 
@@ -22,7 +27,9 @@ class AppPickerActivity : BasePickerActivity() {
         const val EXTRA_PICKED_CONTENT = "result"
     }
 
-    var pickType : String = PICK_TYPE_APP
+    private var pickType : String = PICK_TYPE_APP
+
+    private lateinit var subscription: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +46,26 @@ class AppPickerActivity : BasePickerActivity() {
         }
 
         title = label ?: getString(R.string.choose_app)
-        val itemList = packageManager.queryIntentActivities(queryIntent, 0)
-        setListItems(itemList.map { it.activityInfo }.toTypedArray())
+        setLoading(true)
+        subscription = getActivities(queryIntent)
+            .subscribeOn(Schedulers.io())
+            .delay(100, TimeUnit.MILLISECONDS,AndroidSchedulers.mainThread())
+            .subscribe { list ->
+                setListItems(list)
+                setLoading(false)
+            }
+    }
+
+    private fun getActivities(queryIntent: Intent?) : Single<Array<ActivityInfo>> {
+        return Single.create<Array<ActivityInfo>>{
+            if(queryIntent == null){
+                it.onError(Throwable("Empty intent"))
+            }
+            val itemList = packageManager.queryIntentActivities(queryIntent, 0)
+            val array = itemList.map { resolveInfo -> resolveInfo.activityInfo }.toTypedArray()
+            array.sortBy { activityInfo -> activityInfo.loadLabel(packageManager).toString().toLowerCase() }
+            it.onSuccess(array)
+        }
     }
 
     override fun onItemClick(item: ActivityInfo) {
@@ -80,4 +105,8 @@ class AppPickerActivity : BasePickerActivity() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        subscription.dispose()
+    }
 }
